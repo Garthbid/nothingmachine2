@@ -6,8 +6,7 @@ export function BlankSlate() {
   const rainCanvasRef = useRef<HTMLCanvasElement>(null)
   const haloCanvasRef = useRef<HTMLCanvasElement>(null)
   const dropsRef = useRef<number[]>([])
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const glyphsRef = useRef<any[]>([])
+  const glyphsRef = useRef<Glyph[]>([])
 
   // Binary Rain Effect
   useEffect(() => {
