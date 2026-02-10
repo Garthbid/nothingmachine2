@@ -11,12 +11,16 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useStore } from '@/lib/store'
 import { useProfileStore } from '@/lib/profile-store'
+import { useTeamStore } from '@/lib/team-store'
 import { ProfileModal } from '@/components/ProfileModal'
+import { TeamModal } from '@/components/TeamModal'
 
 export function Header() {
   const { setCurrentView } = useStore()
   const { profile } = useProfileStore()
+  const { members } = useTeamStore()
   const [profileOpen, setProfileOpen] = useState(false)
+  const [teamOpen, setTeamOpen] = useState(false)
 
   return (
     <>
@@ -57,6 +61,36 @@ export function Header() {
             <span className="text-sm">{profile?.name || 'Set Profile'}</span>
           </button>
 
+          <div className="flex items-center">
+            {members.map((member, i) => (
+              <div
+                key={member.id}
+                title={member.name}
+                className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white border-2 border-[#0a0a0a]"
+                style={{
+                  backgroundColor: member.color,
+                  marginLeft: i === 0 ? 0 : -6,
+                  zIndex: members.length - i,
+                  position: 'relative',
+                }}
+              >
+                {member.avatar}
+              </div>
+            ))}
+            <button
+              onClick={() => setTeamOpen(true)}
+              className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium text-white/60 hover:text-white border border-white/20 hover:border-white/40 transition-colors cursor-pointer"
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                marginLeft: members.length > 0 ? -6 : 0,
+                zIndex: 0,
+                position: 'relative',
+              }}
+            >
+              {members.length > 0 ? `+${members.length}` : '+'}
+            </button>
+          </div>
+
           <div className="w-px h-4 bg-white/10" />
 
           <DropdownMenu>
@@ -80,6 +114,7 @@ export function Header() {
       </header>
 
       <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} />
+      <TeamModal open={teamOpen} onClose={() => setTeamOpen(false)} />
     </>
   )
 }

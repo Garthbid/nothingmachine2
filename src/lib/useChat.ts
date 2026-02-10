@@ -5,6 +5,7 @@ import { DefaultChatTransport } from 'ai'
 import { useStore } from './store'
 import { useEditorStore } from './editor-store'
 import { useProfileStore } from './profile-store'
+import { useTeamStore } from './team-store'
 import { IDENTITY_FIELDS } from './identity-fields'
 
 function buildSystemPrompt(
@@ -92,6 +93,7 @@ const transport = new DefaultChatTransport({
     const { files, injectedFileIds } = useStore.getState()
     const { fieldValues } = useEditorStore.getState()
     const { profile } = useProfileStore.getState()
+    const { members } = useTeamStore.getState()
 
     const currentFiles = files
       .filter((f) => injectedFileIds.includes(f.id))
@@ -106,6 +108,12 @@ const transport = new DefaultChatTransport({
         systemPrompt += `\nBio: ${profile.bio}`
       }
       systemPrompt += `\nRespond to this person with awareness of who they are.`
+    }
+
+    // Append team members
+    if (members.length > 0) {
+      const memberList = members.map((m) => `- ${m.name}`).join('\n')
+      systemPrompt += `\n\n---\n\n## Team Members\n${memberList}\nThese are the other people on the team. Be aware of them when relevant.`
     }
 
     return { systemPrompt }
